@@ -5,20 +5,18 @@ class mysql {
 		die ( "Error:" . $error );
 	}
 	
-	function __construct() {
-	
-		
+	function __destruct() {
+		mysqli_close($link);
 	}
-	
-	function connect($config) {
+	function __construct($config) {
 		extract ( $config );
-		if (! $this->con = mysqli_connect ( $dbhost, $dbuser, $dbpwd, $dbname ))
-			$this->err ( mysqli_error ( $this->con ) );
-		mysqli_set_charset ( $this->con, 'UTF8' );
+		if (! $this->link = mysqli_connect ( $dbhost, $dbuser, $dbpwd, $dbname ))
+			$this->err ( mysqli_error ( $this->link ) );
+		mysqli_set_charset ( $this->link, 'UTF8' );
 	}
 	function query($sql) {
-		if (! $query = mysqli_query ( $this->con, $sql )) {
-			$this->err ( $sql . "<br / >" . mysqli_error ( $this->con ) );
+		if (! $query = mysqli_query ( $this->link, $sql )) {
+			$this->err ( $sql . "<br / >" . mysqli_error ( $this->link ) );
 		} else {
 			return $query;
 		}
@@ -32,12 +30,9 @@ class mysql {
 	function findOne($query) {
 		return mysqli_fetch_array ( $query );
 	}
-	function findRes($query, $row = 0, $field = 0) {
-		return mysqli_result ( $query, $row, $field );
-	}
-	function insert($table, $arr) {
-		foreach ( $arr as $key => $value ) {
-			$value = mysqli_real_escape_string ( $this->con, $value );
+	function insert($table, $arg) {
+		foreach ( $arg as $key => $value ) {
+			$value = mysqli_real_escape_string ( $this->link, $value );
 			$keyArr [] = '`' . $key . '`';
 			$valueArr [] = "'" . $value . "'";
 		}
@@ -45,7 +40,10 @@ class mysql {
 		$values = implode ( ",", $valueArr );
 		$sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES (" . $values . ")";
 		$this->query ( $sql );
-		return mysqli_insert_id ( $this->con );
+		return mysqli_insert_id ( $this->link );
+	}
+	function update($table, $arg, $condition) {
+		
 	}
 }
 ?>

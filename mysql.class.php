@@ -1,12 +1,11 @@
 <?php
 class mysql {
-	private static $link;
+	private  $link;
 	function err($error) {
 		die ( "Error:" . $error );
 	}
-	
 	function __destruct() {
-		mysqli_close($link);
+		mysqli_close ( $this->link );
 	}
 	function __construct($config) {
 		extract ( $config );
@@ -43,7 +42,6 @@ class mysql {
 		return mysqli_insert_id ( $this->link );
 	}
 	function update($table, $arg, $condition) {
-		
 	}
 }
 ?>

@@ -41,7 +41,17 @@ class mysql {
 		$this->query ( $sql );
 		return mysqli_insert_id ( $this->link );
 	}
+	
 	function update($table, $arg, $condition) {
+		
+	}
+	
+	function num_rows($res) {
+		return mysqli_num_rows($res);
+	}
+	
+	function insert_id() {
+		return mysqli_insert_id($link);
 	}
 }
 ?>

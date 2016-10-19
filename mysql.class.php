@@ -1,57 +1,60 @@
 <?php
 class mysql {
-	private  $link;
-	function err($error) {
+	static  $link;
+	static function err($error) {
 		die ( "Error:" . $error );
 	}
-	function __destruct() {
-		mysqli_close ( $this->link );
-	}
-	function __construct($config) {
+	
+	static function connnect($config) {
 		extract ( $config );
-		if (! $this->link = mysqli_connect ( $dbhost, $dbuser, $dbpwd, $dbname ))
-			$this->err ( mysqli_error ( $this->link ) );
-		mysqli_set_charset ( $this->link, 'UTF8' );
+		if (! $self->link = mysqli_connect ( $dbhost, $dbuser, $dbpwd, $dbname ))
+			$self->err ( mysqli_error ( $self->link ) );
+		mysqli_set_charset ( $self->link, 'UTF8' );
 	}
-	function query($sql) {
-		if (! $query = mysqli_query ( $this->link, $sql )) {
-			$this->err ( $sql . "<br / >" . mysqli_error ( $this->link ) );
+	static function query($sql) {
+		if (! $query = mysqli_query ( $self->link, $sql )) {
+			$self->err ( $sql . "<br / >" . mysqli_error ( $self->link ) );
 		} else {
 			return $query;
 		}
 	}
-	function findAll($query) {
+	
+	static function real_escape_string($string) {
+		return mysqli_real_escape_string($self->link, $string);
+	}
+	
+	static function findAll($query) {
 		while ( $row = mysqli_fetch_array ( $query ) ) {
 			$list [] = $row;
 		}
 		return isset ( $list ) ? $list : "";
 	}
-	function findOne($query) {
+	static function findOne($query) {
 		return mysqli_fetch_array ( $query );
 	}
-	function insert($table, $arg) {
+	static function insert($table, $arg) {
 		foreach ( $arg as $key => $value ) {
-			$value = mysqli_real_escape_string ( $this->link, $value );
+			$value = mysqli_real_escape_string ( $self->link, $value );
 			$keyArr [] = '`' . $key . '`';
 			$valueArr [] = "'" . $value . "'";
 		}
 		$keys = implode ( ",", $keyArr );
 		$values = implode ( ",", $valueArr );
 		$sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES (" . $values . ")";
-		$this->query ( $sql );
-		return mysqli_insert_id ( $this->link );
+		$self->query ( $sql );
+		return mysqli_insert_id ( $self->link );
 	}
 	
-	function update($table, $arg, $condition) {
+	static function update($table, $arg, $condition) {
 		
 	}
 	
-	function num_rows($res) {
+	static function num_rows($res) {
 		return mysqli_num_rows($res);
 	}
 	
-	function insert_id() {
-		return mysqli_insert_id($link);
+	static function insert_id() {
+		return mysqli_insert_id($self->link);
 	}
 }
 ?>

@@ -1,40 +1,48 @@
 <?php
-require_once 'BaseModel.class.php';
-
-class UserModel extends BaseModel{
+class UserModel{
 	
 	private $username = '';
 	private $password = '';
 	private $flag = -1;
 	private $npassword = '';
+	private $link;
 	
 	function __construct() {
-		parent::__construct();
-		if(isset($_POST['username']))
-			$userName = mysqli_real_escape_string($link, $_POST['username']);
-		if(isset($_POST['password']))
-			$password = mysqli_real_escape_string($link, $_POST['password']);
+		global $config;
+		$this->link = new mysql($config);
+		if(sessionCheck())
+			$this->username = $_SESSION['username'];
+		else if(isset($_POST['username']))
+			$this->username = $this->link->real_escape_string($_POST['username']);
+		
+		if(isset($_POST['password'])) 
+			$this->password = $this->link->real_escape_string($_POST['password']);
 		if(isset($_POST['flag']))
-			$flag = (int)$_POST['flag'];
+			$this->flag = (int)$_POST['flag'];
 		if(isset($_POST['npassword']))
-			$npassword = mysqli_real_escape_string($link, $_POST['npassword']);
+			$this->npassword = $this->link->real_escape_string($_POST['npassword']);
 	}
 	
 	function login($islogin = true) {
-		if(!empty($username) && $flag != -1) {
-			$res = $link->query("SELECT `password` FROM `user` WHERE `username`='$username' && `flag`=$flag");
-			if($islogin == flase && $link->num_rows($res) != 0)
+		if(!empty($this->username) && $this->flag != -1) {
+			
+			$res = $this->link->query("SELECT `password` FROM `user` WHERE `username`='$this->username' && `flag`=$this->flag");
+			if($islogin == false && $this->link->num_rows($res) != 0)
 				return true;
-			if(!empty($password) && $password == $link->findOne($res))
+			
+			if(!empty($this->password) && $this->password == $this->link->findOne($res)[0]) {
+				$_SESSION['username'] = $this->username;
+				$_SESSION['timeout'] = time() + timeout;
 				return true;
+			}
 		}
 		return false;
 	}
 	
 	function register() {
 		if(login(false) == false) {
-			if(!empty($username) && !empty($password) && $flag != -1) {
-				$res = $link->query("INSERT INTO `user` (`username`, `password`) VALUES ('$username', '$password'");
+			if(!empty($this->username) && !empty($this->password) && $this->flag != -1) {
+				$res = $this->link->query("INSERT INTO `user` (`username`, `password`) VALUES ('$this->username', '$this->password'");
 				return $res;
 			}
 		}
@@ -42,8 +50,8 @@ class UserModel extends BaseModel{
 	}
 	
 	function modify() {
-		if(!empty($username) && !empty($password) && !empty($npassword)) {
-			$res = $link->query("UPDATE `user` SET `password`='$npassword' WHERE `username`='$username' LIMIT 1");
+		if(!empty($this->username) && !empty($this->password) && !empty($this->npassword)) {
+			$res = $this->link->query("UPDATE `user` SET `password`='$this->npassword' WHERE `username`='$this->username' LIMIT 1");
 			return $res;
 		}
 		return false;

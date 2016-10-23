@@ -1,5 +1,6 @@
 <?php
-define('timeout', 90 * 60);
+//全局函数库
+define('timeout', 10 * 60);
 
 function M($name, $method) {
 	require_once './Model/' . $name . 'Model.class.php';
@@ -29,10 +30,5 @@ function sessionCheck() {
 	else
 		return false;
 	return true;
-}
-
-function logout() {
-	$_SESSION = array();
-	session_destroy();
 }
 ?>

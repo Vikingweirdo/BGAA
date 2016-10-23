@@ -1,4 +1,5 @@
 <?php
+//数据库接口
 class mysql {
 	private $link;
 	
@@ -11,6 +12,7 @@ class mysql {
 		if (! $this->link = mysqli_connect ( $hostname, $username, $password, $dbname ))
 			$this->err ( mysqli_error ( $this->link ) );
 			mysqli_set_charset ( $this->link, 'UTF8' );
+			
 	}
 	
 	function __destruct() {
@@ -37,23 +39,10 @@ class mysql {
 	}
 	
 	function findOne($res) {
-		return mysqli_fetch_array ( $res );
-	}
-	
-	function insert($table, $arg) {
-		foreach ( $arg as $key => $value ) {
-			$value = mysqli_real_escape_string ( $this->link, $value );
-			$keyArr [] = '`' . $key . '`';
-			$valueArr [] = "'" . $value . "'";
-		}
-		$keys = implode ( ",", $keyArr );
-		$values = implode ( ",", $valueArr );
-		$sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES (" . $values . ")";
-		$this->query ( $sql );
-		return mysqli_insert_id ( $this->link );
-	}
-	
-	function update($table, $arg, $condition) {
+		if(!empty($res))
+			return mysqli_fetch_array ( $res );
+		else
+			return null;
 	}
 	
 	function num_rows($res) {

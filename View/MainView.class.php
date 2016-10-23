@@ -1,4 +1,5 @@
 <?php
+//视图文件 主要根据参数类型输出不同的json格式
 class MainView {
 	function request($data) {
 		if (gettype ( $data ) == 'array')

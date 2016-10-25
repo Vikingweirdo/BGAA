@@ -2,8 +2,11 @@
 //入口部分 主要负责分配模块
 require_once 'mysql.class.php';
 require_once 'function.php';
+require_once './Model/BaseModel.class.php';
 require_once './Model/UserModel.class.php';
 require_once './Model/CourseModel.class.php';
+require_once './Model/GroupModel.class.php';
+require_once './Model/NoticeModel.class.php';
 
 header("Content-Type: text/html; charset=utf8");
 
